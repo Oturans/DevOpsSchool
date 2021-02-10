@@ -1,0 +1,30 @@
+- name: Install httpd
+  hosts: beacons
+  become: true
+  tasks:
+  - name: Install httpd
+    yum:
+      name: httpd
+      state: present
+
+  - name: Check State httpd
+    yum:
+      name: httpd
+      state: started
+    register: status_httpd
+
+  - name: Check State httpd
+    debug:
+      msg: status_httpd
+    
+  - name: Create file index.html
+    copy:
+      content: 'Welcome to my web server'
+      dest: /var/www/html/index.html
+
+  - name: Open Http port
+    firewalld:
+      service: http
+      permanent: yes
+      state: enabled
+
