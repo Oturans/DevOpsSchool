@@ -1,0 +1,39 @@
+- name: Disable NetworkManager and add some text in GRUB
+  hosts: all
+  become: true
+  tasks:
+  - name: Disable NetworkManager
+    systemd:
+      name: NetworkManager
+      state: stopped
+      enabled: no
+    register: status_NetworkManager
+  
+  - name: Check State httpd
+    debug:
+      var: status_NetworkManager
+      verbosity: 3
+
+  - name: check if "net.ifnames=0 biosdevname=0" is configured in the boot command
+    lineinfile:
+      backup: true
+      path: /etc/default/grub
+      regexp: '^GRUB_CMDLINE_LINUX=".*net.ifnames=0 biosdevname=0"'
+      state: absent
+    check_mode: true
+    register: grub_cmdline_check
+    changed_when: false
+
+  - name: add net.ifnames=0 biosdevname=0 in the boot command
+    lineinfile:
+      path: /etc/default/grub
+      state: present
+      regexp: '(GRUB_CMDLINE_LINUX=\".*)\"$'
+      line: '\1 net.ifnames=0 biosdevname=0"'
+      backrefs: yes
+    when: grub_cmdline_check.found == 0
+    notify: update_grub
+
+  handlers:
+  - name: update_grub
+    shell: grub2-mkconfig

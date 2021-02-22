@@ -1,0 +1,26 @@
+- name: Install httpd
+  hosts: all
+  become: true
+  tasks:
+  - name: unInstall httpd
+    yum:
+      name: httpd
+      state: absent
+
+  - name: Remove file (delete file)
+    file:
+      path: /var/www/html/index.html
+      state: absent
+      
+  - name: Open Http port
+    firewalld:
+      service: http
+      permanent: no
+      state: disabled
+
+  - name: restarted firewalld
+    systemd:
+      name: firewalld
+      state: stopped
+      enabled: no
+

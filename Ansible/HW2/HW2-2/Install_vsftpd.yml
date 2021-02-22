@@ -1,0 +1,172 @@
+- name: Install vsftpd
+  hosts: node1.example.com
+  become: true
+  vars_files:
+    - ./vars.yml
+
+  tasks:
+    - name: Update repositories cache
+      yum:
+        update_cache: yes
+      when:
+      - install_delete == 'install'
+
+    - name: Install vsftpd
+      yum:
+        name: vsftpd
+        state: present 
+      when:
+      - install_delete == 'install'
+
+    - name: Create a directory (/var/ftp/pub)
+      file:
+        path: /var/ftp/pub
+        state: directory
+        owner: ftp
+        group: ftp
+        mode: '0755'
+      when:
+      - install_delete == 'install'
+
+#-------------------------------------SELinus policy
+
+    - name: Install  policycoreutils-python/libselinux-python
+      yum:
+        name:  "{{ item }}"
+        state: present 
+      with_items:
+        - policycoreutils-python-utils
+        - libselinux-python3
+      when:
+      - install_delete == 'install'
+
+    - name: Allow vsftpd to modify files in /var/ftp/pub
+      sefcontext:
+        target: '/var/ftp/pub(/.*)?'
+        setype: public_content_rw_t
+        state: present
+      when:
+      - install_delete == 'install'
+
+    - name: Apply new SELinux file context to filesystem
+      command: restorecon -irv /var/ftp/pub
+      when:
+      - install_delete == 'install'
+    
+    - name: Set allow_ftpd_anon_write flag on and keep it persistent across reboots
+      seboolean:
+        name: allow_ftpd_anon_write 
+        state: yes
+        persistent: yes
+      when:
+      - install_delete == 'install'
+
+#-------------------------------------Config vsftpd/enable/restart
+    - name: Config vsftpd/enable/restart
+      block:
+        - name: Add config for vsftpd
+          template:
+            src: templates/vsftpd.j2 
+            dest: /etc/vsftpd/vsftpd.conf 
+            owner: root
+            group: root
+          notify: reload_vsftpd
+
+        - name: Enable vsftpd
+          systemd: 
+            name: vsftpd
+            state: started
+            enabled: yes
+
+        - name: Open FTP port
+          firewalld:
+            port: "{{ item }}" 
+            permanent: yes
+            state: enabled
+          with_items:
+            - 21/tcp
+            - 21/udp
+            - 20/tcp
+            - 20/udp
+            - 50000-51000/tcp
+            - 50000-51000/udp
+        
+        - name: restart firewalld
+          systemd:
+            name: firewalld
+            state: restarted
+            enabled: yes
+           
+      when:
+        - install_delete == 'install'
+    
+
+#--------------------------------------Delete All what we did
+
+    - name: Delete All what we did
+      block:
+        - name: Delete vsftpd.conf
+          file:
+            path: /etc/vsftpd/vsftpd.conf 
+            state: absent
+
+        - name: Deny vsftpd to modify files in /var/ftp/pub
+          sefcontext:
+            target: '/var/ftp/pub(/.*)?'
+            setype: public_content_rw_t
+            state: absent
+
+        - name: Apply Deny SELinux file context to filesystem
+          command: restorecon -irv /var/ftp/pub
+        
+        - name: Set Deny flag on and keep it persistent across reboots
+          seboolean:
+            name: allow_ftpd_anon_write 
+            state: no
+            persistent: no
+      
+        - name: Delete a directory (/var/ftp/pub) if it does not exist
+          file:
+            path: /var/ftp/pub
+            state: absent
+
+        - name: Delete vsftpd
+          yum:
+            name: vsftpd
+            state: absent 
+
+        - name: Delete  policycoreutils-python/libselinux-python
+          yum:
+            name:  "{{ item }}"
+            state: absent 
+          with_items:
+            - policycoreutils-python-utils
+            - libselinux-python3
+               
+        - name: Deny FTP port
+          firewalld:
+            port: "{{ item }}" 
+            permanent: no
+            state: disabled
+          with_items:
+            - 21/tcp
+            - 21/udp
+            - 20/tcp
+            - 20/udp
+            - 50000-51000/tcp
+            - 50000-51000/udp
+        - name: restart firewalld
+          systemd:
+            name: firewalld
+            state: stopped
+            enabled: no
+
+      when: 
+        - install_delete == 'delete'
+
+#-------------------HANDLERS---------------------------------------------
+  handlers: 
+    - name: reload_vsftpd
+      systemd: 
+        name: vsftpd
+        state: restarted

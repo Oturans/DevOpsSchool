@@ -1,0 +1,10 @@
+---
+- name: Install/delete httpd
+  become: yes
+  hosts: node1.example.com # node1.example.com
+  roles:
+    - role: HW1role
+      vars:
+        install_delete: install ## (install/delete)
+        file_dest: '/var/www/html/index.html'
+        http_enabled: yes

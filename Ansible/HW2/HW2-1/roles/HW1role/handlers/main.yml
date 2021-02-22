@@ -1,0 +1,6 @@
+---
+# handlers file for hW1role
+- name: reload_web
+  systemd: 
+    name: httpd
+    state: restarted

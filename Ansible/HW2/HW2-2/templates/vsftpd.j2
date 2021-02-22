@@ -1,0 +1,28 @@
+anonymous_enable={{ anonymous_enable | default('YES') }}
+# Uncomment this to allow local users to log in.
+local_enable={{ local_enable | default('NO') }}
+# Uncomment this to enable any form of FTP write command.
+write_enable={{ write_enable | default('YES') }}
+
+local_umask={{ local_umask | default('022') }}
+
+# When SELinux is enforcing check for SE bool allow_ftpd_anon_write, allow_ftpd_full_access
+anon_upload_enable={{ anon_upload_enable | default('YES') }}
+anon_mkdir_write_enable={{ anon_mkdir_write_enable | default('YES') }}
+dirmessage_enable={{ dirmessage_enable | default('YES') }}
+xferlog_enable={{ xferlog_enable | default('YES') }}
+connect_from_port_20={{ connect_from_port_20 | default('YES') }}
+xferlog_std_format={{ xferlog_std_format | default('YES') }}
+
+listen={{ listen | default('YES') }}
+listen_ipv6={{ listen_ipv6 | default('NO') }}
+
+pam_service_name={{ pam_service_name | default('vsftpd') }}
+userlist_enable={{ userlist_enable | default('YES') }}
+
+anon_other_write_enable={{ anon_other_write_enable | default('YES') }}
+anon_umask={{ anon_umask | default('022') }}
+
+#pasv_enable={{ pasv_enable | default('YES') }}
+#pasv_min_port={{ pasv_min_port | default('50000') }}
+#pasv_max_port={{ pasv_min_port | default('51000') }}

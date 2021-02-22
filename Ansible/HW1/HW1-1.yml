@@ -1,5 +1,5 @@
 - name: Install httpd
-  hosts: beacons
+  hosts: all
   become: true
   tasks:
   - name: Install httpd
@@ -8,15 +8,16 @@
       state: present
 
   - name: Check State httpd
-    yum:
+    systemd:
       name: httpd
       state: started
     register: status_httpd
 
   - name: Check State httpd
     debug:
-      msg: status_httpd
-    
+      var: status_httpd
+      verbosity: 2
+  
   - name: Create file index.html
     copy:
       content: 'Welcome to my web server'
@@ -28,3 +29,8 @@
       permanent: yes
       state: enabled
 
+  - name: restart firewalld
+    systemd:
+      name: firewalld
+      state: restarted
+      enabled: yes

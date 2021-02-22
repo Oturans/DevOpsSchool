@@ -1,0 +1,6 @@
+---
+# defaults file for hW1role
+install_delete: install ## (install/delete)
+file_dest: /var/www/html/index.html
+http_enabled: yes
+

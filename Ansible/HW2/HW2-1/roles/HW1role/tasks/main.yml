@@ -1,0 +1,61 @@
+---
+# tasks file for hW1role
+  - name: Install httpd
+    yum:
+      name: httpd
+      state: present
+    when:
+      - install_delete == 'install'
+
+  - name: Check State httpd
+    systemd:
+      name: httpd
+      state: started
+      enabled: "{{ http_enabled }}"
+    register: status_httpd
+    when: 
+      - install_delete == 'install'
+
+  - name: unInstall httpd
+    yum:
+      name: httpd
+      state: absent
+    when: 
+      - install_delete == 'delete'
+
+  - name: Check State httpd
+    debug:
+      var: status_httpd
+  
+  - name: Create file index.html
+    copy:
+      content: 'Welcome to my web server'
+      dest: "{{ file_dest }}"
+    notify: reload_web
+    when: 
+      - install_delete == 'install'
+
+  - name: Remove file (delete file)
+    file:
+      path: "{{ file_dest }}"
+      state: absent
+    when:
+      - install_delete == 'delete'
+
+
+  - name: Open Http port
+    firewalld:
+      service: http
+      permanent: yes
+      state: enabled
+    when:
+      - install_delete == 'install'
+
+  - name: Close Http port
+    firewalld:
+      service: http
+      permanent: yes
+      state: disabled
+    when: 
+      - install_delete == 'delete'
+
