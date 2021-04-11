@@ -1,0 +1,6 @@
+image:
+  tag: 1.19.8
+name: test
+replicas: 1
+port: 80
+targetPort: 80
