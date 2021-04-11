@@ -20,7 +20,7 @@ Also 2 services each for both Nginx and 2 rules for Ingress.
 
 If you will use in Headers "canary:always", you receive version 2:  
 ```
-curl -H "Host: canary.example.com" -H "canary:always" http://IP_kuebernetes:NodePort_ingress
+curl -H "Host: canary.example.com" -H "canary:always" http://IP_kubernetes:NodePort_ingress
 ```
 ><html>                                        
 ><h1>Hello World!</h1>
@@ -29,7 +29,7 @@ curl -H "Host: canary.example.com" -H "canary:always" http://IP_kuebernetes:Node
  
 If you won't use additional headers you receive version 1:  
 ```
-curl -H "Host: canary.example.com" http://IP_kuebernetes:NodePort_ingress
+curl -H "Host: canary.example.com" http://IP_kubernetes:NodePort_ingress
 ```
 ><html>
 ><h1>Hello World!</h1>
