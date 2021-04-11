@@ -5,7 +5,7 @@ use minio.
 #### 1. Requirements 
     - Kubernetes  
 
-#### 2. Install to Kubernetes next yaml,   
+#### 2. Install to Kubernetes next yaml   
 
 ```
 kubectl apply -f elasticsearch-pv.yaml -f elasticsearch-service.yaml -f elasticsearch-statefulset.yaml
