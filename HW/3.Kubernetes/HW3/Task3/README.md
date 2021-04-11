@@ -1,12 +1,12 @@
 ## HomeWork part #3
 1. Complete chart of the simple application from the lecture. It should be configurable with 
-values. At least you should implement:
-• Number of replicas
-• Labels
-• Network ports
-• Resource names should have similar pattern, for example app-svc and app-ingress
-• Resources (it should be optional)
-2. Any other change that will make code cleaner and avoid repetition
+values. At least you should implement:  
+• Number of replicas  
+• Labels  
+• Network ports  
+• Resource names should have similar pattern, for example app-svc and app-ingress  
+• Resources (it should be optional)  
+2. Any other change that will make code cleaner and avoid repetition  
 
 
 #### 1. Requirements 
@@ -18,7 +18,7 @@ I used Kubernetes in VM (1 master and 1 worker) with Nginx Ingress Controller(No
 
 #### 2. What I did:
 
-I modify file you can chack on next link:  
+How I modified files you can chack on next link:  
 
 https://github.com/Oturans/DevOpsSchool/tree/main/HW/3.Kubernetes/HW3/Task3/app/templates  
 

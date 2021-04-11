@@ -1,7 +1,7 @@
 ## HomeWork part #1
-• Create namespace monitoring
-• Create service account grabber in that namespace
-• Create role that can get, list, watch on all Pods in the cluster
+• Create namespace monitoring   
+• Create service account grabber in that namespace  
+• Create role that can get, list, watch on all Pods in t he cluster  
 
 #### 1. Requirements 
     - Kubernetes  
