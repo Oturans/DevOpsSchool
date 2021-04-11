@@ -4,3 +4,8 @@ name: test
 replicas: 1
 port: 80
 targetPort: 80
+limits:
+  memory: 200Mi
+requests:
+  cpu: 100m
+  memory: 100Mi
